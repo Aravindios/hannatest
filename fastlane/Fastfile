@@ -23,29 +23,8 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     build_app(scheme: "MaterialDesign")
-increment_build_number(
-    build_number: latest_testflight_build_number + 1,
-    xcodeproj: "MaterialDesign.xcodeproj"
-  )
     upload_to_testflight
-create_pull_request(
-  api_token: ENV["GITHUB_TOKEN"],
-  repo: "fastlane/fastlane",
-  title: "Amazing new feature",
-  head: "my-feature",       # optional, defaults to current branch name
-  base: "master", # optional, defaults to "master"
-  body: "Please pull this in!",       # optional
-  api_url: "http://yourdomain/api/v3" # optional, for GitHub Enterprise, defaults to "https://api.github.com"
-)
-
   end
-lane :metrics do
-    scan(scheme: "MaterialDesign", code_coverage: true, derived_data_path: "./DerivedData", output_directory: "./reports")
-    slather(cobertura_xml: true, jenkins: true, scheme: "MaterialDesign", build_directory: "./DerivedData", output_directory: "./reports", proj: "./AlertOnboarding.xcodeproj")
-    sh("cd .. && lizard ./[SOURCE_FOLDER] -l swift --xml > ./reports/lizard-report.xml")
-    swiftlint(output_file: "./reports/swiftlint.txt", ignore_exit_status: true)
-    sonar
-end
 end
 
 
